@@ -11,7 +11,7 @@ reg [31:0] buffer;
 reg [8:0] period; //Длина ПС-последовательности
 reg [3:0] flag;
 wire xor_feedback; 
-assign xor_feedback = {((reg_seed[7]^reg_seed[5])^reg_seed[4])^reg_seed[3]}; // Выборка разрядов для обраной связи
+assign xor_feedback = {((reg_seed[7]^reg_seed[5])^reg_seed[4])^reg_seed[3]}; // Выборка разрядов для обратной связи
 
 always @(posedge clk)
 	begin
@@ -34,13 +34,13 @@ always @(posedge clk)
 				reg_seed <= {reg_seed[6:0], xor_feedback};
 				data <= reg_seed;
 				cnt <= cnt+1;
-				case (cnt)
+				case (cnt) 
 					1: buffer[31:24] <= reg_seed;
 					2: buffer[23:16] <= reg_seed;
 					3: buffer[15:8] <= reg_seed;
 					4: buffer[7:0]<= reg_seed;
 				endcase						
-				case (reg_seed)
+				case (reg_seed) 
 					buffer[31:24]:  
 								begin 
 								flag[0] <= 1; 
@@ -77,8 +77,12 @@ always @(posedge clk)
 										buf_cnt <=0;
 									end
 								end
+					default: 	begin
+									flag <= 0;
+									buf_cnt <=0;
+								end
 				endcase
-				if (flag == 8'hF) begin
+				if (flag == 8'hF) begin 
 					period <= cnt-4;
 					cnt <=0;
 					flag <=0;
